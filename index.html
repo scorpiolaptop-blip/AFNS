@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFNS Complete Guide</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-top:#FFF8FA;
+    --bg-bottom:#FFEEF3;
+    --surface:rgba(255,255,255,0.6);
+    --surface-strong:rgba(255,255,255,0.82);
+    --border:rgba(232,93,138,0.18);
+    --accent:#F7A8C4;
+    --accent-deep:#E85D8A;
+    --navy:#C2447A;
+    --navy-dark:#8A2F5C;
+    --orange:#F7A8C4;
+    --ink:#3A2E33;
+    --muted:#8B7480;
+    --page-bg:#FFF6F8;
+    --mint:#6FBE96;
+    --coral:#E8798A;
+    --t-press:120ms;
+    --t-touch:200ms;
+    --t-reveal:600ms;
+    --ease-spring:cubic-bezier(.22,1,.36,1);
+    --font-display:'Fraunces',serif;
+    --font-body:'Inter',sans-serif;
+  }
+  * { box-sizing:border-box; }
+  @media (prefers-reduced-motion: reduce) {
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
+  html { scroll-behavior:smooth; }
+  body {
+    margin:0;
+    font-family:var(--font-body);
+    background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-bottom) 45%,var(--bg-top) 100%);
+    color:var(--ink);
+    position:relative;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Ambient petal layer ---------- */
+  .petal-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .petal{position:absolute;top:-40px;opacity:0;animation:petalFall linear infinite;will-change:transform;}
+  .petal svg{display:block;filter:drop-shadow(0 2px 4px rgba(200,90,130,0.15));}
+  @keyframes petalFall{
+    0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}
+    6%{opacity:.85;}
+    50%{transform:translateY(50vh) translateX(28px) rotate(180deg);}
+    92%{opacity:.7;}
+    100%{transform:translateY(105vh) translateX(-18px) rotate(360deg);opacity:0;}
+  }
+
+  /* ---------- Scroll progress ---------- */
+  .scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-deep));width:0%;z-index:500;box-shadow:0 0 12px rgba(232,93,138,0.5);transition:width 80ms linear;}
+
+  /* ---------- Header ---------- */
+  header.top {
+    position:sticky;top:0;z-index:200;
+    background:rgba(255,248,250,0.72);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    color:var(--ink);
+    padding:calc(18px + env(safe-area-inset-top)) 24px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;gap:8px;
+    transition:padding var(--t-touch) ease,box-shadow var(--t-touch) ease;
+  }
+  header.top h1 {
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.35rem;
+    margin:0;
+    letter-spacing:0.2px;
+    background:linear-gradient(90deg,var(--navy-dark),var(--accent-deep));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  header.top .brand {
+    color:var(--accent-deep);
+    font-weight:600;
+    font-size:0.85rem;
+    letter-spacing:0.5px;
+  }
+  .subtitle-bar {
+    background:transparent;
+    padding:10px 24px 16px;
+    text-align:center;
+    color:var(--muted);
+    font-size:0.88rem;
+    max-width:1100px;
+    margin:0 auto;
+  }
+
+  /* ---------- Chip nav ---------- */
+  .chip-nav-wrap{position:sticky;top:0;z-index:190;background:rgba(255,248,250,0.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+  .chip-nav{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;max-width:1100px;margin:0 auto;scrollbar-width:none;}
+  .chip-nav::-webkit-scrollbar{display:none;}
+  .chip-nav a{flex-shrink:0;padding:7px 14px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--ink);font-size:0.78rem;font-weight:600;text-decoration:none;transition:all var(--t-press) ease;white-space:nowrap;}
+  .chip-nav a.active{background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(232,93,138,0.35);}
+  .chip-nav a:active{transform:scale(.95);}
+
+  nav.toc {
+    max-width:1100px;
+    margin:22px auto 0;
+    padding:18px 22px;
+    background:var(--surface);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--border);
+    border-radius:20px;
+    box-shadow:0 8px 30px rgba(232,93,138,0.08);
+    position:relative;z-index:2;
+  }
+  nav.toc h3 { margin-top:0; color:var(--navy-dark); font-family:var(--font-display); font-weight:600; }
+  nav.toc ul { columns:2; padding-left:18px; margin:0; }
+  nav.toc a { color:var(--navy-dark); text-decoration:none; font-weight:600; }
+  nav.toc a:hover { color:var(--accent-deep); }
+
+  .overview-wrap { max-width:1100px; margin:26px auto; padding:0 22px; position:relative;z-index:2; }
+  .overview-wrap h2 {
+    font-family:var(--font-display);
+    color:var(--navy-dark);
+    border-left:none;
+    padding-left:0;
+    position:relative;
+  }
+  .overview-wrap h2::before{content:'✿';color:var(--accent-deep);margin-right:8px;}
+  .overview-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; }
+  .ov-card {
+    display:block;
+    border:1px solid;
+    border-radius:18px;
+    overflow:hidden;
+    text-decoration:none;
+    color:inherit;
+    background:var(--surface);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 6px 20px rgba(232,93,138,0.06);
+    opacity:0;transform:translateY(24px);
+    transition:opacity var(--t-reveal) var(--ease-spring),transform var(--t-reveal) var(--ease-spring),box-shadow var(--t-touch) ease;
+  }
+  .ov-card.reveal{opacity:1;transform:translateY(0);}
+  .ov-card:hover, .ov-card:active { transform:translateY(-4px); box-shadow:0 14px 32px rgba(232,93,138,0.18); }
+  .ov-card.reveal:hover{transform:translateY(-4px);}
+  .ov-head { color:#fff; font-weight:700; padding:12px 16px; font-size:0.95rem; font-family:var(--font-display); }
+  .ov-list { margin:0; padding:14px 16px 14px 32px; font-size:0.86rem; line-height:1.55; }
+
+  main { max-width:1100px; margin:0 auto; padding:0 22px 60px; position:relative; z-index:2; }
+  section.subject {
+    background:var(--surface-strong);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-top:5px solid;
+    border:1px solid var(--border);
+    border-radius:22px;
+    box-shadow:0 10px 34px rgba(232,93,138,0.08);
+    padding:26px 26px 30px;
+    margin-top:34px;
+    scroll-margin-top:110px;
+    opacity:0;transform:translateY(30px);
+    transition:opacity var(--t-reveal) var(--ease-spring),transform var(--t-reveal) var(--ease-spring);
+  }
+  section.subject.reveal{opacity:1;transform:translateY(0);}
+  section.subject h2 { display:flex;align-items:center;gap:10px;font-size:1.35rem;font-family:var(--font-display);font-weight:600; }
+  .sq { display:inline-block; width:13px; height:13px; border-radius:4px; }
+  .explanation ul { padding-left:20px; line-height:1.7; }
+  .explanation li { margin-bottom:7px; }
+  .explanation p { line-height:1.7; }
+  .mcq-heading { margin-top:28px; border-top:1px dashed var(--border); padding-top:20px; font-family:var(--font-display); }
+  .mcq-hint { color:var(--muted); font-size:0.85rem; margin-top:-8px; }
+
+  details.mcq {
+    background:rgba(255,255,255,0.55);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px 16px;
+    margin-bottom:11px;
+    transition:box-shadow var(--t-touch) ease,border-color var(--t-touch) ease;
+  }
+  details.mcq[open]{box-shadow:0 6px 18px rgba(232,93,138,0.1);border-color:var(--accent);}
+  details.mcq summary { cursor:pointer; font-weight:600; list-style:none; }
+  details.mcq summary::-webkit-details-marker { display:none; }
+  details.mcq summary::before { content:"✿ "; color:var(--accent-deep); }
+  details.mcq[open] summary::before { content:"❀ "; }
+  .mcq-body { margin-top:11px; }
+  .opt { padding:5px 0; font-size:0.93rem; }
+  .opt.correct { color:var(--mint); font-weight:700; }
+  .explain {
+    margin-top:9px;
+    background:rgba(247,168,196,0.12);
+    border-left:4px solid var(--accent-deep);
+    padding:11px 13px;
+    font-size:0.9rem;
+    border-radius:8px;
+  }
+
+  section#mocktests, section#pastpapers-note {
+    background:var(--surface-strong);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--border);
+    border-radius:22px;
+    box-shadow:0 10px 34px rgba(232,93,138,0.08);
+    padding:26px 26px 30px;
+    margin-top:34px;
+    scroll-margin-top:110px;
+    opacity:0;transform:translateY(30px);
+    transition:opacity var(--t-reveal) var(--ease-spring),transform var(--t-reveal) var(--ease-spring);
+  }
+  section#mocktests.reveal, section#pastpapers-note.reveal{opacity:1;transform:translateY(0);}
+  section#pastpapers-note { border-left:5px solid var(--accent); }
+  section#pastpapers-note h2 { color:var(--navy-dark); font-family:var(--font-display); }
+  #mocktests h2 { font-family:var(--font-display); }
+
+  footer {
+    text-align:center;
+    color:var(--muted);
+    font-size:0.85rem;
+    padding:24px;
+    position:relative;z-index:2;
+  }
+
+  /* ---------- Back to top ---------- */
+  .back-to-top{position:fixed;right:18px;bottom:22px;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border:none;font-size:18px;box-shadow:0 8px 24px rgba(232,93,138,0.4);cursor:pointer;z-index:250;opacity:0;pointer-events:none;transform:translateY(16px) scale(.9);transition:opacity var(--t-touch) ease,transform var(--t-touch) var(--ease-spring);}
+  .back-to-top.show{opacity:1;pointer-events:auto;transform:translateY(0) scale(1);}
+  .back-to-top:active{transform:scale(.9);}
+
+  @media (max-width:600px) {
+    nav.toc ul { columns:1; }
+    header.top { flex-direction:column; align-items:flex-start; }
+  }
+
+  /* ---------- Progress card ---------- */
+  .progress-card{max-width:1100px;margin:20px auto 0;padding:18px 22px;background:var(--surface);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 30px rgba(232,93,138,0.08);}
+  .progress-card h3{margin:0 0 12px;font-family:var(--font-display);color:var(--navy-dark);font-size:1.05rem;}
+  .progress-stats{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat-pill{flex:1;min-width:100px;background:rgba(247,168,196,0.12);border:1px solid var(--border);border-radius:14px;padding:10px 12px;text-align:center;}
+  .stat-pill .num{font-family:var(--font-display);font-size:1.3rem;font-weight:600;color:var(--accent-deep);display:block;}
+  .stat-pill .lbl{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+  /* ---------- Mode toggle ---------- */
+  .mode-toggle{display:flex;gap:8px;margin:10px 0 16px;}
+  .mode-btn{padding:8px 16px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);font-weight:600;font-size:0.82rem;cursor:pointer;transition:all var(--t-press) ease;font-family:var(--font-body);}
+  .mode-btn.active{background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(232,93,138,0.3);}
+
+  /* ---------- Quiz panel ---------- */
+  .quiz-panel{background:rgba(255,255,255,0.5);border:1px solid var(--border);border-radius:16px;padding:18px;}
+  .quiz-progress{font-size:0.8rem;color:var(--muted);margin-bottom:10px;font-weight:600;}
+  .quiz-question{font-weight:600;margin-bottom:12px;font-size:1rem;}
+  .quiz-option{display:block;width:100%;text-align:left;background:rgba(255,255,255,0.7);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;margin-bottom:8px;font-size:0.92rem;cursor:pointer;transition:all var(--t-press) ease;font-family:var(--font-body);color:var(--ink);}
+  .quiz-option:hover{border-color:var(--accent);}
+  .quiz-option.selected{border-color:var(--accent-deep);background:rgba(247,168,196,0.15);}
+  .quiz-option.reveal-correct{border-color:var(--mint);background:rgba(111,190,150,0.15);color:#2E6B4F;font-weight:600;}
+  .quiz-option.reveal-wrong{border-color:var(--coral);background:rgba(232,121,138,0.15);color:#8A3540;font-weight:600;}
+  .quiz-option:disabled{cursor:default;}
+  .quiz-actions{display:flex;gap:10px;margin-top:14px;}
+  .quiz-btn{padding:10px 18px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;font-weight:600;font-size:0.88rem;cursor:pointer;transition:transform var(--t-press) ease;font-family:var(--font-body);}
+  .quiz-btn:disabled{opacity:0.4;cursor:default;}
+  .quiz-btn:active:not(:disabled){transform:scale(.96);}
+  .quiz-feedback{margin-top:12px;padding:11px 13px;border-radius:10px;font-size:0.9rem;display:none;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.correct{background:rgba(111,190,150,0.15);border-left:4px solid var(--mint);}
+  .quiz-feedback.wrong{background:rgba(232,121,138,0.15);border-left:4px solid var(--coral);}
+  .quiz-summary{text-align:center;padding:20px 10px;}
+  .quiz-summary .score{font-family:var(--font-display);font-size:2rem;color:var(--accent-deep);font-weight:600;}
+
+  /* ---------- Toast ---------- */
+  .toast-wrap{position:fixed;top:14px;left:16px;right:16px;z-index:600;display:flex;justify-content:center;pointer-events:none;}
+  .toast{max-width:360px;width:100%;background:rgba(255,248,250,0.95);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:16px;padding:12px 16px;box-shadow:0 10px 30px rgba(232,93,138,0.2);transform:translateY(-120%);opacity:0;transition:all 0.5s var(--ease-spring);font-size:0.88rem;}
+  .toast.show{transform:translateY(0);opacity:1;}
+</style>
+
+</head>
+<body>
+
+<div class="petal-layer" id="petalLayer"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+
+<header class="top">
+  <h1>AFNS COMPLETE GUIDE</h1>
+  <div class="brand">Entry Test Study Companion</div>
+</header>
+<div class="subtitle-bar">Verbal &amp; Non-Verbal Intelligence · English · Physics · Chemistry · Biology · General Knowledge · Islamiat &nbsp;—&nbsp; 106+ Practice MCQs with Explanations · Learn &amp; Quiz Modes</div>
+
+
+<div class="chip-nav-wrap">
+  <div class="chip-nav" id="chipNav">
+    <a href="#verbal" data-target="verbal">Verbal</a>
+    <a href="#nonverbal" data-target="nonverbal">Non-Verbal</a>
+    <a href="#english" data-target="english">English</a>
+    <a href="#physics" data-target="physics">Physics</a>
+    <a href="#chemistry" data-target="chemistry">Chemistry</a>
+    <a href="#biology" data-target="biology">Biology</a>
+    <a href="#gk" data-target="gk">GK</a>
+    <a href="#islamiat" data-target="islamiat">Islamiat</a>
+    <a href="#mocktests" data-target="mocktests">Mock Test</a>
+  </div>
+</div>
+<div class="toast-wrap"><div class="toast" id="toast"></div></div>
+
+<div class="progress-card" id="progressCard">
+  <h3>✿ Your Progress</h3>
+  <div class="progress-stats">
+    <div class="stat-pill"><span class="num" id="statAttempted">0</span><span class="lbl">Attempted</span></div>
+    <div class="stat-pill"><span class="num" id="statCorrect">0</span><span class="lbl">Correct</span></div>
+    <div class="stat-pill"><span class="num" id="statAccuracy">0%</span><span class="lbl">Accuracy</span></div>
+  </div>
+</div>
+
+<nav class="toc">
+  <h3>Contents</h3>
+  <ul><li><a href="#verbal">Verbal Intelligence</a></li><li><a href="#nonverbal">Non-Verbal Intelligence</a></li><li><a href="#english">English</a></li><li><a href="#physics">Physics</a></li><li><a href="#chemistry">Chemistry</a></li><li><a href="#biology">Biology</a></li><li><a href="#gk">General Knowledge &amp; Pakistan Studies</a></li><li><a href="#islamiat">Islamic Studies (Islamiat)</a></li><li><a href="#mocktests">Practice Test Papers</a></li><li><a href="#pastpapers-note">A Note on "Past Papers"</a></li></ul>
+</nav>
+
+<div class="overview-wrap">
+  <h2>Quick Topic Overview</h2>
+  <div class="overview-grid">
+    
+        <a href="#verbal" class="ov-card" style="border-color:#D6336C;">
+          <div class="ov-head" style="background:#D6336C;">■ Verbal Intelligence</div>
+          <ul class="ov-list" style="background:#FDEBF1;"><li>Analogies: Identify the exact relationship inside the first pair…</li><li>Classification (Odd One Out): Group items by category first; the odd item…</li><li>Number &amp; Letter Series: Check differences, ratios, alternating patterns, or…</li><li>Coding-Decoding: Map each letter to a shift value along the alphabet;…</li></ul>
+        </a>
+
+        <a href="#nonverbal" class="ov-card" style="border-color:#B85C9E;">
+          <div class="ov-head" style="background:#B85C9E;">■ Non-Verbal Intelligence</div>
+          <ul class="ov-list" style="background:#F8EBF6;"><li>Series Completion: A sequence of figures changes by rotation, added/removed…</li><li>Odd Figure Out: One figure among 4–5 differs in number of sides, symmetry, or…</li><li>Mirror Image: How a figure looks when reflected across a vertical or…</li><li>Water Image: Like a mirror image, but reflected across a horizontal axis (as…</li></ul>
+        </a>
+
+        <a href="#english" class="ov-card" style="border-color:#9D5CB8;">
+          <div class="ov-head" style="background:#9D5CB8;">■ English</div>
+          <ul class="ov-list" style="background:#F3EBFA;"><li>Subject-Verb Agreement: Singular subjects take singular verbs, even when…</li><li>Tenses: Revise all 12 tense forms; pay special attention to Present Perfect…</li><li>Parts of Speech: Be able to instantly identify nouns, pronouns, adjectives,…</li><li>Active &amp; Passive Voice: Practice converting sentences across all tenses.</li></ul>
+        </a>
+
+        <a href="#physics" class="ov-card" style="border-color:#E0567A;">
+          <div class="ov-head" style="background:#E0567A;">■ Physics</div>
+          <ul class="ov-list" style="background:#FDEDF0;"><li>Measurements &amp; Units: SI base units, derived units, and dimensional basics.</li><li>Mechanics: Motion, Newton&#x27;s three laws, momentum, work, energy, and power.</li><li>Circular Motion &amp; Gravitation: Centripetal force, orbital basics.</li><li>Waves, Sound &amp; Light: Reflection, refraction, lenses, and mirrors.</li></ul>
+        </a>
+
+        <a href="#chemistry" class="ov-card" style="border-color:#D98A4A;">
+          <div class="ov-head" style="background:#D98A4A;">■ Chemistry</div>
+          <ul class="ov-list" style="background:#FDF1E6;"><li>Atomic Structure &amp; Periodic Table: Protons, neutrons, electrons, and periodic…</li><li>Chemical Bonding: Ionic, covalent, and hydrogen bonding — and how they affect…</li><li>States of Matter &amp; Gas Laws: Basic behaviour of solids, liquids, and gases.</li><li>Acids, Bases &amp; Salts: The pH scale and everyday examples.</li></ul>
+        </a>
+
+        <a href="#biology" class="ov-card" style="border-color:#4FA98A;">
+          <div class="ov-head" style="background:#4FA98A;">■ Biology</div>
+          <ul class="ov-list" style="background:#E9F7F1;"><li>Cell Biology: Organelles and their functions, mitosis, and meiosis.</li><li>Genetics: DNA, RNA, Mendel&#x27;s laws, and basic patterns of inheritance.</li><li>Human Physiology: Heart, lungs, kidneys, and the digestive system.</li><li>Enzymes: Types, mechanism of action, and factors affecting activity.</li></ul>
+        </a>
+
+        <a href="#gk" class="ov-card" style="border-color:#B8895A;">
+          <div class="ov-head" style="background:#B8895A;">■ General Knowledge &amp; Pakistan Studies</div>
+          <ul class="ov-list" style="background:#F7EFE6;"><li>History: Pakistan Movement, founding leaders, and key milestones.</li><li>Geography: Provinces, rivers, mountain ranges, and borders.</li><li>National Symbols: Flag, anthem, currency, and national days.</li><li>Current Affairs: Stay updated on recent national and international…</li></ul>
+        </a>
+
+        <a href="#islamiat" class="ov-card" style="border-color:#6B8F8A;">
+          <div class="ov-head" style="background:#6B8F8A;">■ Islamic Studies (Islamiat)</div>
+          <ul class="ov-list" style="background:#EAF2F1;"><li>Pillars of Islam: The five foundational acts of worship.</li><li>Kalimas &amp; Beliefs: Basic articles of faith.</li><li>Seerah Basics: Major events in the life of the Holy Prophet (PBUH).</li><li>Holy Book &amp; Revelation: Basic facts about the Quran.</li></ul>
+        </a>
+  </div>
+</div>
+
+<main>
+  
+    <section class="subject" id="verbal" style="border-top-color:#D6336C;">
+      <h2 style="color:#D6336C;"><span class="sq" style="background:#D6336C;"></span>Verbal Intelligence</h2>
+      <div class="explanation">
+    <p>Verbal Intelligence tests logical reasoning expressed through words and numbers. It checks how
+    quickly and accurately you can spot relationships, patterns, and rules — not how much you've
+    memorised.</p>
+    <ul>
+      <li><b>Analogies:</b> Identify the exact relationship inside the first pair (part-to-whole,
+      worker-to-tool, cause-effect, synonym/antonym) before matching it to the answer choices.</li>
+      <li><b>Classification (Odd One Out):</b> Group items by category first; the odd item usually
+      breaks one specific shared property, not an obvious one.</li>
+      <li><b>Number &amp; Letter Series:</b> Check differences, ratios, alternating patterns, or
+      squares/cubes between consecutive terms — don't assume a simple +1/-1 rule.</li>
+      <li><b>Coding-Decoding:</b> Map each letter to a shift value along the alphabet; double-check
+      the shift direction (forward vs backward).</li>
+      <li><b>Blood Relations &amp; Direction Sense:</b> Sketch a quick family tree or compass on
+      scratch paper instead of tracking relationships mentally.</li>
+      <li><b>Syllogisms:</b> Draw simple circle (Venn) diagrams for "All/Some/No" statements before
+      picking a conclusion — don't rely on gut feeling.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#D6336C;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. Pen is to Write as Knife is to:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Sharp</div><div class="opt correct">B) Cut ✓</div><div class="opt">C) Kitchen</div><div class="opt">D) Blade</div>
+            <div class="explain"><b>Explanation:</b> A pen&#x27;s function is to write; a knife&#x27;s function is to cut. The relationship is &#x27;object to its function&#x27;, not to a related noun like Sharp/Kitchen/Blade.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. Find the odd one out.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Triangle</div><div class="opt">B) Square</div><div class="opt">C) Circle</div><div class="opt correct">D) Cube ✓</div>
+            <div class="explain"><b>Explanation:</b> Triangle, Square and Circle are all 2-D (flat) shapes. Cube is a 3-D solid, so it doesn&#x27;t belong with the rest.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. Complete the series: 2, 6, 12, 20, 30, ?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 36</div><div class="opt">B) 40</div><div class="opt correct">C) 42 ✓</div><div class="opt">D) 44</div>
+            <div class="explain"><b>Explanation:</b> The differences between terms are 4, 6, 8, 10, 12 (increasing by 2 each time). 30 + 12 = 42.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. If BOOK is coded as CPPL, how is WORD coded?</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) XPSE ✓</div><div class="opt">B) XQSE</div><div class="opt">C) XPES</div><div class="opt">D) YPSE</div>
+            <div class="explain"><b>Explanation:</b> Each letter is shifted forward by 1: B→C, O→P, O→P, K→L. Applying the same rule: W→X, O→P, R→S, D→E, giving XPSE.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. Doctor is to Hospital as Teacher is to:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Student</div><div class="opt">B) Book</div><div class="opt correct">C) School ✓</div><div class="opt">D) Classroom</div>
+            <div class="explain"><b>Explanation:</b> A Doctor&#x27;s primary workplace is a Hospital; a Teacher&#x27;s primary workplace is a School (Classroom is a room inside the school, not the institution itself).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. Find the next term: A, C, F, J, O, ?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) S</div><div class="opt">B) T</div><div class="opt correct">C) U ✓</div><div class="opt">D) V</div>
+            <div class="explain"><b>Explanation:</b> The gap between letters increases by 1 each time: +2, +3, +4, +5, so the next gap is +6. O + 6 letters = U.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q7. Pointing to a man, a woman said, &#x27;His mother is the only daughter of my mother.&#x27; How is the woman related to the man?</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) Mother ✓</div><div class="opt">B) Sister</div><div class="opt">C) Aunt</div><div class="opt">D) Grandmother</div>
+            <div class="explain"><b>Explanation:</b> &#x27;Only daughter of my mother&#x27; means the woman herself (since she is her own mother&#x27;s only daughter). So the man&#x27;s mother is the woman herself — she is his mother.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q8. Choose the odd one out.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Rose</div><div class="opt">B) Lily</div><div class="opt">C) Lotus</div><div class="opt correct">D) Mango ✓</div>
+            <div class="explain"><b>Explanation:</b> Rose, Lily and Lotus are all flowers. Mango is a fruit, so it does not belong to the group.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q9. If North becomes East, East becomes South, what does South become?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) North</div><div class="opt correct">B) West ✓</div><div class="opt">C) East</div><div class="opt">D) South-West</div>
+            <div class="explain"><b>Explanation:</b> Each direction is being rotated 90° clockwise (N→E, E→S). Following the same 90° clockwise rotation, South → West.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q10. Complete the analogy: Bird is to Nest as Bee is to:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Honey</div><div class="opt">B) Sting</div><div class="opt correct">C) Hive ✓</div><div class="opt">D) Flower</div>
+            <div class="explain"><b>Explanation:</b> A Bird lives in a Nest; a Bee lives in a Hive. Honey and Sting are things bees produce/do, not where they live.</div>
+          </div>
+        </details>
+    </section>
+    
+
+    <section class="subject" id="nonverbal" style="border-top-color:#B85C9E;">
+      <h2 style="color:#B85C9E;"><span class="sq" style="background:#B85C9E;"></span>Non-Verbal Intelligence</h2>
+      <div class="explanation">
+    <p>In the real computer-based test, these questions are shown as images (shapes, patterns, and
+    figures), not words. Since you can't practise the exact on-screen images here, this section
+    explains every question type and the reasoning method to apply, so you recognise the pattern
+    instantly during the real test.</p>
+    <ul>
+      <li><b>Series Completion:</b> A sequence of figures changes by rotation, added/removed lines,
+      or shading at each step. Find the ONE consistent rule and extend it.</li>
+      <li><b>Odd Figure Out:</b> One figure among 4–5 differs in number of sides, symmetry, or an
+      internal pattern.</li>
+      <li><b>Mirror Image:</b> How a figure looks when reflected across a vertical or horizontal axis
+      — left and right elements swap places.</li>
+      <li><b>Water Image:</b> Like a mirror image, but reflected across a horizontal axis (as if seen
+      in still water below the figure) — the image is flipped top-to-bottom.</li>
+      <li><b>Paper Folding &amp; Cutting:</b> Track how a folded, punched paper looks when unfolded —
+      punches mirror across every fold line.</li>
+      <li><b>Embedded Figures:</b> A simple shape hidden inside a busier diagram — scan systematically
+      left-to-right, top-to-bottom.</li>
+      <li><b>Cubes &amp; Dice:</b> Given 2–3 views of the same die, use elimination to work out which
+      face is opposite which.</li>
+    </ul>
+    <p><b>Practice tip:</b> Use any AFNS/ISSB-style non-verbal reasoning app or workbook with actual
+    diagrams, and time yourself to under 20 seconds per question. For mirror/water images, practise
+    with a real pocket mirror against a printed diagram until the flip becomes instantly obvious.</p>
+    </div>
+      <h3 class="mcq-heading" style="color:#B85C9E;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. A figure is reflected across a VERTICAL line drawn through its centre. What happens to its left and right halves?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) They stay the same</div><div class="opt correct">B) They swap places ✓</div><div class="opt">C) They both disappear</div><div class="opt">D) They rotate 180°</div>
+            <div class="explain"><b>Explanation:</b> A vertical mirror line swaps left and right — whatever was on the left side of the original appears on the right side of the reflection, and vice versa.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. A &#x27;water image&#x27; of a figure is best described as a reflection across which axis?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Vertical axis</div><div class="opt correct">B) Horizontal axis ✓</div><div class="opt">C) Diagonal axis</div><div class="opt">D) No axis — same as original</div>
+            <div class="explain"><b>Explanation:</b> A water image simulates a reflection in water lying below the object, so it flips across a horizontal axis (top becomes bottom).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. In a series of figures, each next figure gains one extra dot in a fixed pattern. What should you check first?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Colour of dots</div><div class="opt correct">B) Number of dots added at each step ✓</div><div class="opt">C) Font of any letters</div><div class="opt">D) Size of the whole figure</div>
+            <div class="explain"><b>Explanation:</b> When a series changes by a repeating count, the number added per step (the numeric rule) is the key pattern to identify before choosing the next figure.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. A square sheet of paper is folded in half and a hole is punched near the fold. When unfolded, how many holes will appear?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 1</div><div class="opt correct">B) 2 ✓</div><div class="opt">C) 3</div><div class="opt">D) 4</div>
+            <div class="explain"><b>Explanation:</b> A single fold doubles the layers of paper at the punch point, so one punch through both layers produces 2 holes when the paper is unfolded, mirrored across the fold line.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. Which technique helps most when solving &#x27;odd figure out&#x27; visual questions?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Memorising all shapes in advance</div><div class="opt correct">B) Comparing number of sides, symmetry, and internal pattern one at a time ✓</div><div class="opt">C) Picking the largest figure</div><div class="opt">D) Picking the figure with the most colour</div>
+            <div class="explain"><b>Explanation:</b> Systematically comparing sides, symmetry, and internal details isolates the single property that differs, which is how the odd figure is identified.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. If Face 1 shows a dot and Face 2 (adjacent, from a different view) shows a star on the same die, what technique finds the face opposite the dot?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Guessing</div><div class="opt correct">B) Elimination using all given rotated views ✓</div><div class="opt">C) Assuming opposite faces always match</div><div class="opt">D) Ignoring the other views</div>
+            <div class="explain"><b>Explanation:</b> Cube/dice questions are solved by comparing all given rotated views and eliminating which faces cannot be opposite each other, narrowing down the correct pair by elimination.</div>
+          </div>
+        </details>
+    </section>
+    
+
+    <section class="subject" id="english" style="border-top-color:#9D5CB8;">
+      <h2 style="color:#9D5CB8;"><span class="sq" style="background:#9D5CB8;"></span>English</h2>
+      <div class="explanation">
+    <p>English MCQs test grammar accuracy, vocabulary range, and comprehension speed.</p>
+    <ul>
+      <li><b>Subject-Verb Agreement:</b> Singular subjects take singular verbs, even when separated
+      from the verb by a phrase (e.g., "The list of items <i>is</i> long").</li>
+      <li><b>Tenses:</b> Revise all 12 tense forms; pay special attention to Present Perfect vs Simple
+      Past, and tense shifts in reported speech.</li>
+      <li><b>Parts of Speech:</b> Be able to instantly identify nouns, pronouns, adjectives, verbs,
+      adverbs, prepositions and conjunctions in a sentence.</li>
+      <li><b>Active &amp; Passive Voice:</b> Practice converting sentences across all tenses.</li>
+      <li><b>Direct &amp; Indirect Speech:</b> Know the pronoun, tense, and time-word changes
+      required when converting.</li>
+      <li><b>Articles &amp; Prepositions:</b> The most common trick area — revise fixed preposition
+      phrases (e.g., "married <i>to</i>", "depend <i>on</i>", "consist <i>of</i>").</li>
+      <li><b>Vocabulary:</b> Build daily lists of synonyms, antonyms, and one-word substitutions.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#9D5CB8;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. Choose the correctly spelled word.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Recieve</div><div class="opt correct">B) Receive ✓</div><div class="opt">C) Receeve</div><div class="opt">D) Receve</div>
+            <div class="explain"><b>Explanation:</b> The rule &#x27;i before e except after c&#x27; does not apply here in the usual direction — this word is an exception where e comes before i: R-E-C-E-I-V-E.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. Fill in the blank: She has been living here ___ 2015.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) for</div><div class="opt correct">B) since ✓</div><div class="opt">C) from</div><div class="opt">D) at</div>
+            <div class="explain"><b>Explanation:</b> &#x27;Since&#x27; is used with a specific point in time (a year, date, or event) to show when a continuing action started. &#x27;For&#x27; would be used with a duration (e.g., &#x27;for 9 years&#x27;).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. Choose the synonym of &#x27;Benevolent&#x27;.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Cruel</div><div class="opt correct">B) Kind ✓</div><div class="opt">C) Selfish</div><div class="opt">D) Arrogant</div>
+            <div class="explain"><b>Explanation:</b> Benevolent means well-meaning and charitable — closest in meaning to &#x27;Kind&#x27;.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. Choose the antonym of &#x27;Scarce&#x27;.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Rare</div><div class="opt correct">B) Abundant ✓</div><div class="opt">C) Limited</div><div class="opt">D) Costly</div>
+            <div class="explain"><b>Explanation:</b> Scarce means in short supply. Its opposite is &#x27;Abundant&#x27;, meaning plentiful.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. Identify the correct sentence.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) He don&#x27;t like tea.</div><div class="opt">B) He doesn&#x27;t likes tea.</div><div class="opt correct">C) He doesn&#x27;t like tea. ✓</div><div class="opt">D) He not like tea.</div>
+            <div class="explain"><b>Explanation:</b> With third-person singular subjects (he/she/it), the auxiliary &#x27;doesn&#x27;t&#x27; already carries the -s; the main verb stays in base form: &#x27;doesn&#x27;t like&#x27;.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. One word for &#x27;a person who loves books&#x27;.</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) Bibliophile ✓</div><div class="opt">B) Philanthropist</div><div class="opt">C) Linguist</div><div class="opt">D) Bibliographer</div>
+            <div class="explain"><b>Explanation:</b> A &#x27;Bibliophile&#x27; is a lover of books. A Philanthropist is someone who donates to good causes; a Linguist studies languages; a Bibliographer compiles bibliographies.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q7. Choose the correct passive voice: &#x27;They are building a house.&#x27;</summary>
+          <div class="mcq-body">
+            <div class="opt">A) A house is built by them.</div><div class="opt">B) A house was being built by them.</div><div class="opt correct">C) A house is being built by them. ✓</div><div class="opt">D) A house has been built by them.</div>
+            <div class="explain"><b>Explanation:</b> The original sentence is Present Continuous (&#x27;are building&#x27;), so the passive must also be Present Continuous: &#x27;is being built&#x27;.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q8. Fill in the blank: Neither the manager nor the workers ___ satisfied.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) is</div><div class="opt">B) was</div><div class="opt correct">C) are ✓</div><div class="opt">D) be</div>
+            <div class="explain"><b>Explanation:</b> In &#x27;neither...nor&#x27; constructions, the verb agrees with the noun closer to it — here &#x27;workers&#x27; (plural), so &#x27;are&#x27; is correct.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q9. Choose the correct indirect speech: He said, &#x27;I am tired.&#x27;</summary>
+          <div class="mcq-body">
+            <div class="opt">A) He said that he is tired.</div><div class="opt correct">B) He said that he was tired. ✓</div><div class="opt">C) He says that he was tired.</div><div class="opt">D) He said that he will be tired.</div>
+            <div class="explain"><b>Explanation:</b> When the reporting verb (&#x27;said&#x27;) is in the past tense, the tense inside the reported speech shifts back one step: &#x27;am&#x27; → &#x27;was&#x27;.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q10. Choose the correctly punctuated sentence.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Its a nice day, isnt it?</div><div class="opt correct">B) It&#x27;s a nice day, isn&#x27;t it? ✓</div><div class="opt">C) Its&#x27; a nice day, isn&#x27;t it</div><div class="opt">D) It is a nice day isnt it?</div>
+            <div class="explain"><b>Explanation:</b> &#x27;It&#x27;s&#x27; (contraction of &#x27;it is&#x27;) and &#x27;isn&#x27;t&#x27; (contraction of &#x27;is not&#x27;) both need apostrophes, and the sentence needs a closing question mark.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q11. Choose the correct preposition: He is good ___ mathematics.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) in</div><div class="opt correct">B) at ✓</div><div class="opt">C) on</div><div class="opt">D) with</div>
+            <div class="explain"><b>Explanation:</b> &#x27;Good at&#x27; is the fixed idiomatic preposition used with skills or subjects, e.g., &#x27;good at maths&#x27;, &#x27;good at sports&#x27;.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q12. Choose the plural of &#x27;Phenomenon&#x27;.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Phenomenons</div><div class="opt correct">B) Phenomena ✓</div><div class="opt">C) Phenomenas</div><div class="opt">D) Phenomenoms</div>
+            <div class="explain"><b>Explanation:</b> &#x27;Phenomenon&#x27; is a Greek-origin word; its irregular plural is &#x27;Phenomena&#x27;, not the regular &#x27;-s&#x27; form.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q11. Spot the error: "Neither of the students have submitted their assignment."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Neither</div><div class="opt correct">B) have ✓</div><div class="opt">C) their</div><div class="opt">D) No error</div>
+            <div class="explain"><b>Explanation:</b> "Neither" is singular and takes a singular verb — it should be "has submitted", not "have submitted".</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q12. Choose the correctly punctuated sentence.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) She said, "I am ready".</div><div class="opt correct">B) She said, "I am ready." ✓</div><div class="opt">C) She said "I am ready."</div><div class="opt">D) She said, I am ready.</div>
+            <div class="explain"><b>Explanation:</b> In standard punctuation, the closing punctuation mark goes inside the quotation marks, and a comma introduces the quoted speech.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q13. One-word substitution: "A person who can speak many languages."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Linguist</div><div class="opt correct">B) Polyglot ✓</div><div class="opt">C) Bilingual</div><div class="opt">D) Translator</div>
+            <div class="explain"><b>Explanation:</b> A "Polyglot" is someone who knows and can use several languages. A "Linguist" studies language academically, which is a different meaning.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q14. Synonym of "Meticulous":</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Careless</div><div class="opt correct">B) Precise ✓</div><div class="opt">C) Quick</div><div class="opt">D) Lazy</div>
+            <div class="explain"><b>Explanation:</b> "Meticulous" means showing great attention to detail; "Precise" is the closest match among the options.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q15. Antonym of "Abundant":</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Plentiful</div><div class="opt correct">B) Scarce ✓</div><div class="opt">C) Generous</div><div class="opt">D) Wide</div>
+            <div class="explain"><b>Explanation:</b> "Abundant" means present in great quantity; its opposite is "Scarce", meaning insufficient or rare.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q16. Choose the correct idiom for "to reveal a secret":</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Break the ice</div><div class="opt correct">B) Let the cat out of the bag ✓</div><div class="opt">C) Beat around the bush</div><div class="opt">D) Once in a blue moon</div>
+            <div class="explain"><b>Explanation:</b> "Let the cat out of the bag" means to accidentally reveal a secret. "Break the ice" means to ease tension; "Beat around the bush" means to avoid a topic.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q17. Fill in the blank: "He has been working here ___ 2015."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) for</div><div class="opt correct">B) since ✓</div><div class="opt">C) from</div><div class="opt">D) at</div>
+            <div class="explain"><b>Explanation:</b> "Since" is used with a specific starting point in time (2015); "for" is used with a duration (e.g., "for 9 years").</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q18. Choose the correctly spelled word.</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Ocassion</div><div class="opt correct">B) Occasion ✓</div><div class="opt">C) Occassion</div><div class="opt">D) Ocasion</div>
+            <div class="explain"><b>Explanation:</b> The correct spelling is "Occasion" — double "c", single "s".</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q19. Identify the correctly formed passive voice: "The manager will complete the report."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) The report is completed by the manager.</div><div class="opt correct">B) The report will be completed by the manager. ✓</div><div class="opt">C) The report was completed by the manager.</div><div class="opt">D) The report has been completed by the manager.</div>
+            <div class="explain"><b>Explanation:</b> Future simple active ("will complete") becomes future simple passive: "will be + past participle" — "will be completed".</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q20. Reading comprehension: "Despite the heavy rain, the match continued because the ground had good drainage." Why did the match continue?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) The rain stopped suddenly</div><div class="opt">B) The players insisted</div><div class="opt correct">C) The ground drained water well ✓</div><div class="opt">D) The umpire ignored the rain</div>
+            <div class="explain"><b>Explanation:</b> The sentence directly states the ground "had good drainage", which is why the match wasn't interrupted despite heavy rain.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q21. Choose the correct article: "___ European Union has 27 member states."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) A</div><div class="opt correct">B) The ✓</div><div class="opt">C) An</div><div class="opt">D) No article</div>
+            <div class="explain"><b>Explanation:</b> Although "European" starts with a vowel letter, it starts with a consonant sound ("yoo-ropean"), so "a/an" rules don't apply here — "The" is used because it's a specific, unique organisation.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q22. Choose the word that means the opposite of "Reluctant":</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Hesitant</div><div class="opt correct">B) Willing ✓</div><div class="opt">C) Unwilling</div><div class="opt">D) Doubtful</div>
+            <div class="explain"><b>Explanation:</b> "Reluctant" means unwilling or hesitant; its opposite is "Willing".</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q23. Spot the error: "Each of the boys have brought their own lunch."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Each</div><div class="opt correct">B) have ✓</div><div class="opt">C) brought</div><div class="opt">D) No error</div>
+            <div class="explain"><b>Explanation:</b> "Each" is singular, so the correct verb is "has brought", not "have brought".</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q24. One-word substitution: "One who does not believe in the existence of God."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Agnostic</div><div class="opt correct">B) Atheist ✓</div><div class="opt">C) Theist</div><div class="opt">D) Pessimist</div>
+            <div class="explain"><b>Explanation:</b> An "Atheist" denies the existence of God, while an "Agnostic" believes it cannot be known for certain either way.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q25. Choose the correctly ordered sentence: "always / She / on time / arrives."</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Always she arrives on time.</div><div class="opt correct">B) She always arrives on time. ✓</div><div class="opt">C) She arrives always on time.</div><div class="opt">D) On time she always arrives.</div>
+            <div class="explain"><b>Explanation:</b> Adverbs of frequency like "always" are placed before the main verb but after the subject: Subject + always + verb.</div>
+          </div>
+        </details>
+
+    </section>
+    
+
+    <section class="subject" id="physics" style="border-top-color:#E0567A;">
+      <h2 style="color:#E0567A;"><span class="sq" style="background:#E0567A;"></span>Physics</h2>
+      <div class="explanation">
+    <p>Physics MCQs are drawn from FSc Part-I &amp; Part-II core concepts. Focus on definitions,
+    units, and basic conceptual application rather than heavy derivations.</p>
+    <ul>
+      <li><b>Measurements &amp; Units:</b> SI base units, derived units, and dimensional basics.</li>
+      <li><b>Mechanics:</b> Motion, Newton's three laws, momentum, work, energy, and power.</li>
+      <li><b>Circular Motion &amp; Gravitation:</b> Centripetal force, orbital basics.</li>
+      <li><b>Waves, Sound &amp; Light:</b> Reflection, refraction, lenses, and mirrors.</li>
+      <li><b>Heat &amp; Thermodynamics:</b> Modes of heat transfer, temperature scales.</li>
+      <li><b>Electricity &amp; Magnetism:</b> Ohm's Law, simple circuits, electromagnetic induction
+      basics.</li>
+      <li><b>Modern Physics:</b> Basic atomic structure and elementary nuclear physics facts.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#E0567A;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. The SI unit of force is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Joule</div><div class="opt correct">B) Newton ✓</div><div class="opt">C) Watt</div><div class="opt">D) Pascal</div>
+            <div class="explain"><b>Explanation:</b> Force = mass × acceleration; its SI unit is the Newton (N), named after Sir Isaac Newton.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. Which law states &#x27;every action has an equal and opposite reaction&#x27;?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Newton&#x27;s First Law</div><div class="opt">B) Newton&#x27;s Second Law</div><div class="opt correct">C) Newton&#x27;s Third Law ✓</div><div class="opt">D) Law of Conservation of Energy</div>
+            <div class="explain"><b>Explanation:</b> This is the exact statement of Newton&#x27;s Third Law of Motion.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. The unit of electric current is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Volt</div><div class="opt">B) Ohm</div><div class="opt correct">C) Ampere ✓</div><div class="opt">D) Coulomb</div>
+            <div class="explain"><b>Explanation:</b> Electric current is measured in Amperes (A). Volt measures potential difference, Ohm measures resistance, and Coulomb measures charge.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. Speed of light in vacuum is approximately:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 3 x 10^5 m/s</div><div class="opt">B) 3 x 10^6 m/s</div><div class="opt correct">C) 3 x 10^8 m/s ✓</div><div class="opt">D) 3 x 10^10 m/s</div>
+            <div class="explain"><b>Explanation:</b> The speed of light in a vacuum is approximately 3 × 10^8 metres per second, a fundamental physical constant.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. Which quantity is a vector?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Mass</div><div class="opt">B) Speed</div><div class="opt correct">C) Displacement ✓</div><div class="opt">D) Energy</div>
+            <div class="explain"><b>Explanation:</b> Displacement has both magnitude and direction, making it a vector quantity. Mass, speed, and energy are scalars (magnitude only).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. The SI unit of power is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Joule</div><div class="opt">B) Newton</div><div class="opt correct">C) Watt ✓</div><div class="opt">D) Volt</div>
+            <div class="explain"><b>Explanation:</b> Power is the rate of doing work, measured in Watts (Joules per second).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q7. Ohm&#x27;s Law relates voltage, current and:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Power</div><div class="opt correct">B) Resistance ✓</div><div class="opt">C) Energy</div><div class="opt">D) Charge</div>
+            <div class="explain"><b>Explanation:</b> Ohm&#x27;s Law states V = IR, relating Voltage, Current, and Resistance.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q8. A convex lens is also called a:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Diverging lens</div><div class="opt correct">B) Converging lens ✓</div><div class="opt">C) Cylindrical lens</div><div class="opt">D) Plano lens</div>
+            <div class="explain"><b>Explanation:</b> A convex lens bends parallel light rays inward to a focal point, so it is called a converging lens.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q9. The process by which heat travels through empty space (e.g., from the Sun) is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Conduction</div><div class="opt">B) Convection</div><div class="opt correct">C) Radiation ✓</div><div class="opt">D) Diffusion</div>
+            <div class="explain"><b>Explanation:</b> Radiation is the only heat transfer method that does not require a medium, which is how heat from the Sun reaches Earth through the vacuum of space.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q10. Kinetic energy of a body depends on its:</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) Mass and velocity ✓</div><div class="opt">B) Mass only</div><div class="opt">C) Velocity only</div><div class="opt">D) Weight only</div>
+            <div class="explain"><b>Explanation:</b> Kinetic Energy = ½mv², so it depends on both the mass and the velocity (specifically velocity squared) of the body.</div>
+          </div>
+        </details>
+    </section>
+    
+
+    <section class="subject" id="chemistry" style="border-top-color:#D98A4A;">
+      <h2 style="color:#D98A4A;"><span class="sq" style="background:#D98A4A;"></span>Chemistry</h2>
+      <div class="explanation">
+    <p>Chemistry MCQs draw on FSc Part-I &amp; Part-II fundamentals — atomic structure, bonding,
+    reactions, and basic organic chemistry.</p>
+    <ul>
+      <li><b>Atomic Structure &amp; Periodic Table:</b> Protons, neutrons, electrons, and periodic
+      trends.</li>
+      <li><b>Chemical Bonding:</b> Ionic, covalent, and hydrogen bonding — and how they affect
+      properties.</li>
+      <li><b>States of Matter &amp; Gas Laws:</b> Basic behaviour of solids, liquids, and gases.</li>
+      <li><b>Acids, Bases &amp; Salts:</b> The pH scale and everyday examples.</li>
+      <li><b>Stoichiometry:</b> Balancing chemical equations — a commonly tested skill.</li>
+      <li><b>Organic Chemistry:</b> Hydrocarbons and basic functional groups.</li>
+      <li><b>Electrochemistry:</b> Oxidation-reduction (redox) fundamentals.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#D98A4A;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. The atomic number of an element represents the number of:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Neutrons</div><div class="opt correct">B) Protons ✓</div><div class="opt">C) Electrons + Neutrons</div><div class="opt">D) Protons + Neutrons</div>
+            <div class="explain"><b>Explanation:</b> Atomic number is defined specifically as the number of protons in the nucleus of an atom.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. Which gas is most abundant in Earth&#x27;s atmosphere?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Oxygen</div><div class="opt">B) Carbon dioxide</div><div class="opt correct">C) Nitrogen ✓</div><div class="opt">D) Hydrogen</div>
+            <div class="explain"><b>Explanation:</b> Nitrogen makes up about 78% of Earth&#x27;s atmosphere, far more than oxygen (about 21%).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. The pH of pure water at room temperature is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 0</div><div class="opt correct">B) 7 ✓</div><div class="opt">C) 14</div><div class="opt">D) 10</div>
+            <div class="explain"><b>Explanation:</b> Pure water is neutral, with a pH value of 7 on the 0–14 pH scale.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. Table salt is chemically known as:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Calcium chloride</div><div class="opt correct">B) Sodium chloride ✓</div><div class="opt">C) Potassium chloride</div><div class="opt">D) Sodium bicarbonate</div>
+            <div class="explain"><b>Explanation:</b> Common table salt is Sodium Chloride, chemical formula NaCl.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. Which type of bond involves sharing of electron pairs?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Ionic bond</div><div class="opt correct">B) Covalent bond ✓</div><div class="opt">C) Metallic bond</div><div class="opt">D) Hydrogen bond</div>
+            <div class="explain"><b>Explanation:</b> A covalent bond forms when two atoms share one or more pairs of electrons, unlike an ionic bond where electrons are transferred.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. The chemical formula of methane is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) CH2</div><div class="opt">B) CH3</div><div class="opt correct">C) CH4 ✓</div><div class="opt">D) C2H6</div>
+            <div class="explain"><b>Explanation:</b> Methane, the simplest hydrocarbon, has the formula CH4 — one carbon bonded to four hydrogen atoms.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q7. Rusting of iron is an example of:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Reduction</div><div class="opt correct">B) Oxidation ✓</div><div class="opt">C) Sublimation</div><div class="opt">D) Neutralisation</div>
+            <div class="explain"><b>Explanation:</b> Rusting occurs when iron reacts with oxygen and moisture, losing electrons — this is an oxidation reaction.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q8. Which of the following is an alkali metal?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Calcium</div><div class="opt correct">B) Sodium ✓</div><div class="opt">C) Aluminium</div><div class="opt">D) Iron</div>
+            <div class="explain"><b>Explanation:</b> Sodium belongs to Group 1 of the periodic table, the alkali metals. Calcium is an alkaline earth metal (Group 2).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q9. Vinegar mainly contains:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Citric acid</div><div class="opt correct">B) Acetic acid ✓</div><div class="opt">C) Sulfuric acid</div><div class="opt">D) Lactic acid</div>
+            <div class="explain"><b>Explanation:</b> Vinegar is a dilute solution of acetic acid in water, giving it its characteristic sour taste.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q10. The process of converting a gas directly into a solid is called:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Evaporation</div><div class="opt">B) Condensation</div><div class="opt correct">C) Deposition ✓</div><div class="opt">D) Sublimation</div>
+            <div class="explain"><b>Explanation:</b> Deposition is the phase change directly from gas to solid, skipping the liquid state (the reverse of sublimation).</div>
+          </div>
+        </details>
+    </section>
+    
+
+    <section class="subject" id="biology" style="border-top-color:#4FA98A;">
+      <h2 style="color:#4FA98A;"><span class="sq" style="background:#4FA98A;"></span>Biology</h2>
+      <div class="explanation">
+    <p>Biology carries extra weight for AFNS candidates since it underpins nursing practice directly.
+    Focus especially on human anatomy &amp; physiology, cell biology, and genetics.</p>
+    <ul>
+      <li><b>Cell Biology:</b> Organelles and their functions, mitosis, and meiosis.</li>
+      <li><b>Genetics:</b> DNA, RNA, Mendel's laws, and basic patterns of inheritance.</li>
+      <li><b>Human Physiology:</b> Heart, lungs, kidneys, and the digestive system.</li>
+      <li><b>Enzymes:</b> Types, mechanism of action, and factors affecting activity.</li>
+      <li><b>Blood:</b> Composition, ABO/Rh blood groups, and clotting.</li>
+      <li><b>Nervous &amp; Endocrine Systems:</b> Basic structure and hormone functions.</li>
+      <li><b>Immunity &amp; Common Diseases:</b> Causes, transmission, and prevention basics.</li>
+      <li><b>Plant Biology:</b> Photosynthesis and transport in plants.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#4FA98A;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. The powerhouse of the cell is the:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Nucleus</div><div class="opt">B) Ribosome</div><div class="opt correct">C) Mitochondrion ✓</div><div class="opt">D) Golgi apparatus</div>
+            <div class="explain"><b>Explanation:</b> Mitochondria generate ATP (cellular energy) through respiration, earning them the nickname &#x27;powerhouse of the cell&#x27;.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. Human blood is classified into how many major ABO groups?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 2</div><div class="opt">B) 3</div><div class="opt correct">C) 4 ✓</div><div class="opt">D) 5</div>
+            <div class="explain"><b>Explanation:</b> The ABO blood group system has four main types: A, B, AB, and O.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. Which organ is primarily responsible for filtering blood and producing urine?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Liver</div><div class="opt correct">B) Kidney ✓</div><div class="opt">C) Pancreas</div><div class="opt">D) Spleen</div>
+            <div class="explain"><b>Explanation:</b> The kidneys filter waste products from the blood and produce urine as part of the excretory system.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. The functional unit of the kidney is called:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Neuron</div><div class="opt correct">B) Nephron ✓</div><div class="opt">C) Alveolus</div><div class="opt">D) Villus</div>
+            <div class="explain"><b>Explanation:</b> The nephron is the microscopic structural and functional unit responsible for filtering blood within the kidney.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. Which blood cells are primarily responsible for fighting infection?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Red blood cells</div><div class="opt correct">B) White blood cells ✓</div><div class="opt">C) Platelets</div><div class="opt">D) Plasma cells</div>
+            <div class="explain"><b>Explanation:</b> White blood cells (leukocytes) are part of the immune system and defend the body against infections.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. DNA replication occurs during which phase of the cell cycle?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) G1 phase</div><div class="opt correct">B) S phase ✓</div><div class="opt">C) G2 phase</div><div class="opt">D) M phase</div>
+            <div class="explain"><b>Explanation:</b> The S (Synthesis) phase of interphase is specifically when DNA is replicated before cell division.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q7. The gas exchange in the lungs occurs in the:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Bronchi</div><div class="opt">B) Trachea</div><div class="opt correct">C) Alveoli ✓</div><div class="opt">D) Larynx</div>
+            <div class="explain"><b>Explanation:</b> Alveoli are tiny air sacs in the lungs where oxygen and carbon dioxide are exchanged with the blood.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q8. Insulin is produced by which organ?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Liver</div><div class="opt correct">B) Pancreas ✓</div><div class="opt">C) Thyroid</div><div class="opt">D) Adrenal gland</div>
+            <div class="explain"><b>Explanation:</b> Insulin is produced by beta cells in the pancreas and regulates blood glucose levels.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q9. The normal number of chromosomes in a human somatic (body) cell is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 23</div><div class="opt">B) 44</div><div class="opt correct">C) 46 ✓</div><div class="opt">D) 48</div>
+            <div class="explain"><b>Explanation:</b> Human somatic cells are diploid, containing 46 chromosomes (23 pairs). Only reproductive cells (gametes) have 23.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q10. Which part of the brain controls balance and coordination?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Cerebrum</div><div class="opt correct">B) Cerebellum ✓</div><div class="opt">C) Medulla oblongata</div><div class="opt">D) Hypothalamus</div>
+            <div class="explain"><b>Explanation:</b> The cerebellum, located at the back of the brain, is primarily responsible for muscle coordination and balance.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q11. Photosynthesis mainly occurs in which plant cell organelle?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Mitochondrion</div><div class="opt">B) Nucleus</div><div class="opt correct">C) Chloroplast ✓</div><div class="opt">D) Vacuole</div>
+            <div class="explain"><b>Explanation:</b> Chloroplasts contain chlorophyll and are the site where photosynthesis converts light energy into chemical energy.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q12. The universal blood donor group is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) A</div><div class="opt">B) B</div><div class="opt">C) AB</div><div class="opt correct">D) O negative ✓</div>
+            <div class="explain"><b>Explanation:</b> O-negative blood lacks A, B, and Rh antigens, so it can typically be given to patients of any blood type in emergencies.</div>
+          </div>
+        </details>
+    </section>
+    
+
+    <section class="subject" id="gk" style="border-top-color:#B8895A;">
+      <h2 style="color:#B8895A;"><span class="sq" style="background:#B8895A;"></span>General Knowledge &amp; Pakistan Studies</h2>
+      <div class="explanation">
+    <p>This section covers Pakistan's history, geography, current national leadership/institutions,
+    and basic everyday science and current affairs.</p>
+    <ul>
+      <li><b>History:</b> Pakistan Movement, founding leaders, and key milestones.</li>
+      <li><b>Geography:</b> Provinces, rivers, mountain ranges, and borders.</li>
+      <li><b>National Symbols:</b> Flag, anthem, currency, and national days.</li>
+      <li><b>Current Affairs:</b> Stay updated on recent national and international developments —
+      this changes constantly, so revise it fresh close to the test date.</li>
+      <li><b>Everyday Science:</b> General scientific facts relevant to daily life.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#B8895A;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. Pakistan came into being on:</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) 14 August 1947 ✓</div><div class="opt">B) 23 March 1940</div><div class="opt">C) 15 August 1947</div><div class="opt">D) 6 September 1965</div>
+            <div class="explain"><b>Explanation:</b> Pakistan became an independent nation on 14 August 1947.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. The national language of Pakistan is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Punjabi</div><div class="opt correct">B) Urdu ✓</div><div class="opt">C) Sindhi</div><div class="opt">D) Pashto</div>
+            <div class="explain"><b>Explanation:</b> Urdu is constitutionally recognised as Pakistan&#x27;s national language.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. The longest river in Pakistan is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Jhelum</div><div class="opt">B) Chenab</div><div class="opt correct">C) Indus ✓</div><div class="opt">D) Ravi</div>
+            <div class="explain"><b>Explanation:</b> The Indus River is the longest river flowing through Pakistan, giving the country its name (Land of the Indus).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. The Lahore Resolution was passed in the year:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 1930</div><div class="opt correct">B) 1940 ✓</div><div class="opt">C) 1945</div><div class="opt">D) 1947</div>
+            <div class="explain"><b>Explanation:</b> The Lahore Resolution (also called the Pakistan Resolution) was passed on 23 March 1940.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. The currency of Pakistan is the:</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) Rupee ✓</div><div class="opt">B) Taka</div><div class="opt">C) Dinar</div><div class="opt">D) Riyal</div>
+            <div class="explain"><b>Explanation:</b> Pakistan&#x27;s official currency is the Pakistani Rupee (PKR).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. K2, the second highest peak in the world, is located in:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Punjab</div><div class="opt">B) Sindh</div><div class="opt correct">C) Gilgit-Baltistan ✓</div><div class="opt">D) Balochistan</div>
+            <div class="explain"><b>Explanation:</b> K2 is located in the Karakoram range within Gilgit-Baltistan, Pakistan.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q7. The national flower of Pakistan is:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Rose</div><div class="opt correct">B) Jasmine ✓</div><div class="opt">C) Lily</div><div class="opt">D) Tulip</div>
+            <div class="explain"><b>Explanation:</b> Jasmine (Chambeli) is recognised as Pakistan&#x27;s national flower.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q8. Pakistan&#x27;s national anthem was composed (music) by:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Allama Iqbal</div><div class="opt correct">B) Hafeez Jalandhari ✓</div><div class="opt">C) Faiz Ahmed Faiz</div><div class="opt">D) Ahmed Rushdi</div>
+            <div class="explain"><b>Explanation:</b> The lyrics of Pakistan&#x27;s national anthem were written by Hafeez Jalandhari; the tune was composed by Ahmed G. Chagla.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q9. Which province is known as the &#x27;Land of Five Rivers&#x27;?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Sindh</div><div class="opt correct">B) Punjab ✓</div><div class="opt">C) Balochistan</div><div class="opt">D) Khyber Pakhtunkhwa</div>
+            <div class="explain"><b>Explanation:</b> &#x27;Punjab&#x27; literally means &#x27;land of five rivers&#x27; (Panj-aab), referring to the Sutlej, Beas, Ravi, Chenab, and Jhelum.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q10. Pakistan&#x27;s flag colour green represents:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) The army</div><div class="opt correct">B) The majority Muslim population ✓</div><div class="opt">C) Agriculture</div><div class="opt">D) The mountains</div>
+            <div class="explain"><b>Explanation:</b> The green in Pakistan&#x27;s flag represents the country&#x27;s majority Muslim population, while the white stripe represents religious minorities.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q11. Pakistan's constitution was adopted in the year:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 1956</div><div class="opt">B) 1962</div><div class="opt correct">C) 1973 ✓</div><div class="opt">D) 1985</div>
+            <div class="explain"><b>Explanation:</b> The current Constitution of Pakistan was passed by the National Assembly in 1973 and remains, with amendments, the supreme law of the country.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q12. How many provinces does Pakistan have?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 3</div><div class="opt correct">B) 4 ✓</div><div class="opt">C) 5</div><div class="opt">D) 6</div>
+            <div class="explain"><b>Explanation:</b> Pakistan has four provinces: Punjab, Sindh, Khyber Pakhtunkhwa, and Balochistan, plus Gilgit-Baltistan and Islamabad Capital Territory as separate administrative areas.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q13. Pakistan became a member of the United Nations in:</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) 1947 ✓</div><div class="opt">B) 1950</div><div class="opt">C) 1956</div><div class="opt">D) 1965</div>
+            <div class="explain"><b>Explanation:</b> Pakistan joined the United Nations on 30 September 1947, shortly after independence.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q14. The headquarters of SAARC (South Asian Association for Regional Cooperation) is located in:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) New Delhi</div><div class="opt">B) Islamabad</div><div class="opt correct">C) Kathmandu ✓</div><div class="opt">D) Dhaka</div>
+            <div class="explain"><b>Explanation:</b> SAARC's secretariat headquarters is based in Kathmandu, Nepal.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q15. Which mountain range separates Pakistan from China?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Hindu Kush</div><div class="opt">B) Sulaiman Range</div><div class="opt correct">C) Karakoram ✓</div><div class="opt">D) Kirthar Range</div>
+            <div class="explain"><b>Explanation:</b> The Karakoram range, home to K2, forms the natural boundary between northern Pakistan and China.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q16. Which is the largest national park in Pakistan by area?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Margalla Hills National Park</div><div class="opt correct">B) Hingol National Park ✓</div><div class="opt">C) Chitral Gol National Park</div><div class="opt">D) Lal Suhanra National Park</div>
+            <div class="explain"><b>Explanation:</b> Hingol National Park in Balochistan is Pakistan's largest national park by land area.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q17. The Pakistan Army's officer training academy (PMA) is located in:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Abbottabad</div><div class="opt correct">B) Kakul ✓</div><div class="opt">C) Nowshera</div><div class="opt">D) Mangla</div>
+            <div class="explain"><b>Explanation:</b> The Pakistan Military Academy (PMA) is situated at Kakul, near Abbottabad.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q18. Which organ of the United Nations is primarily responsible for international peace and security?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) General Assembly</div><div class="opt correct">B) Security Council ✓</div><div class="opt">C) Economic and Social Council</div><div class="opt">D) Secretariat</div>
+            <div class="explain"><b>Explanation:</b> The UN Security Council holds primary responsibility for maintaining international peace and security, including the power to authorise military action.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q19. The first Pakistani to receive a Nobel Prize was:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Malala Yousafzai</div><div class="opt correct">B) Dr. Abdus Salam ✓</div><div class="opt">C) Abdul Sattar Edhi</div><div class="opt">D) Ahmed Salim</div>
+            <div class="explain"><b>Explanation:</b> Dr. Abdus Salam won the Nobel Prize in Physics in 1979, becoming the first Pakistani (and first Muslim) Nobel laureate in science.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q20. Which of these is the currency of Saudi Arabia?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Dinar</div><div class="opt correct">B) Riyal ✓</div><div class="opt">C) Dirham</div><div class="opt">D) Rial</div>
+            <div class="explain"><b>Explanation:</b> Saudi Arabia's official currency is the Saudi Riyal.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q21. Which of the following gases is most abundant in Earth's atmosphere?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Oxygen</div><div class="opt correct">B) Nitrogen ✓</div><div class="opt">C) Carbon Dioxide</div><div class="opt">D) Argon</div>
+            <div class="explain"><b>Explanation:</b> Nitrogen makes up about 78% of Earth's atmosphere by volume; oxygen is second at around 21%.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q22. The Wagah Border, a well-known flag-lowering ceremony site, lies between Pakistan and India near which city?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Sialkot</div><div class="opt correct">B) Lahore ✓</div><div class="opt">C) Multan</div><div class="opt">D) Faisalabad</div>
+            <div class="explain"><b>Explanation:</b> The Wagah Border crossing lies about 24 km from Lahore, on the Grand Trunk Road between Lahore and Amritsar.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q23. Who was the first Governor-General of Pakistan?</summary>
+          <div class="mcq-body">
+            <div class="opt correct">A) Muhammad Ali Jinnah ✓</div><div class="opt">B) Liaquat Ali Khan</div><div class="opt">C) Khawaja Nazimuddin</div><div class="opt">D) Iskander Mirza</div>
+            <div class="explain"><b>Explanation:</b> Muhammad Ali Jinnah, founder of Pakistan, served as its first Governor-General from 1947 until his death in 1948.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q24. Which planet is known as the "Red Planet"?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Venus</div><div class="opt correct">B) Mars ✓</div><div class="opt">C) Jupiter</div><div class="opt">D) Mercury</div>
+            <div class="explain"><b>Explanation:</b> Mars appears reddish due to iron oxide (rust) on its surface, earning it the nickname "Red Planet".</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q25. The Objectives Resolution, later made a substantive part of Pakistan's Constitution, was passed in:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 1947</div><div class="opt correct">B) 1949 ✓</div><div class="opt">C) 1956</div><div class="opt">D) 1973</div>
+            <div class="explain"><b>Explanation:</b> The Objectives Resolution was passed by the Constituent Assembly in March 1949, laying down the foundational principles for Pakistan's future constitutions.</div>
+          </div>
+        </details>
+
+    </section>
+    
+
+    <section class="subject" id="islamiat" style="border-top-color:#6B8F8A;">
+      <h2 style="color:#6B8F8A;"><span class="sq" style="background:#6B8F8A;"></span>Islamic Studies (Islamiat)</h2>
+      <div class="explanation">
+    <p>A short, focused section is usually included in general knowledge portions of Armed Forces
+    entry tests — covering the basics of Islamic belief and history.</p>
+    <ul>
+      <li><b>Pillars of Islam:</b> The five foundational acts of worship.</li>
+      <li><b>Kalimas &amp; Beliefs:</b> Basic articles of faith.</li>
+      <li><b>Seerah Basics:</b> Major events in the life of the Holy Prophet (PBUH).</li>
+      <li><b>Holy Book &amp; Revelation:</b> Basic facts about the Quran.</li>
+    </ul>
+    </div>
+      <h3 class="mcq-heading" style="color:#6B8F8A;">Practice MCQs</h3>
+      <p class="mcq-hint">Tap/click a question to reveal the answer and explanation.</p>
+      
+        <details class="mcq">
+          <summary>Q1. How many pillars of Islam are there?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Three</div><div class="opt">B) Four</div><div class="opt correct">C) Five ✓</div><div class="opt">D) Six</div>
+            <div class="explain"><b>Explanation:</b> The five pillars of Islam are: Shahadah (faith), Salah (prayer), Zakat (charity), Sawm (fasting), and Hajj (pilgrimage).</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q2. The Holy Quran was revealed over a period of approximately:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) 10 years</div><div class="opt correct">B) 23 years ✓</div><div class="opt">C) 30 years</div><div class="opt">D) 40 years</div>
+            <div class="explain"><b>Explanation:</b> The Quran was revealed to the Holy Prophet (PBUH) gradually over approximately 23 years.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q3. Which month of the Islamic calendar is reserved for fasting (Sawm)?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Muharram</div><div class="opt">B) Rajab</div><div class="opt correct">C) Ramadan ✓</div><div class="opt">D) Shawwal</div>
+            <div class="explain"><b>Explanation:</b> Ramadan, the ninth month of the Islamic calendar, is the month of obligatory fasting for Muslims.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q4. The compulsory charity in Islam is called:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Sadaqah</div><div class="opt correct">B) Zakat ✓</div><div class="opt">C) Khums</div><div class="opt">D) Fidya</div>
+            <div class="explain"><b>Explanation:</b> Zakat is the obligatory annual charity, one of the five pillars of Islam, distinct from voluntary Sadaqah.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q5. The pilgrimage to Makkah is known as:</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Umrah</div><div class="opt correct">B) Hajj ✓</div><div class="opt">C) Ziyarat</div><div class="opt">D) Tawaf</div>
+            <div class="explain"><b>Explanation:</b> Hajj is the obligatory annual pilgrimage to Makkah, required once in a lifetime for those who are able.</div>
+          </div>
+        </details>
+        <details class="mcq">
+          <summary>Q6. The first revelation to Prophet Muhammad (PBUH) took place in which cave?</summary>
+          <div class="mcq-body">
+            <div class="opt">A) Cave of Thawr</div><div class="opt correct">B) Cave Hira ✓</div><div class="opt">C) Cave of Uhud</div><div class="opt">D) Cave of Badr</div>
+            <div class="explain"><b>Explanation:</b> The first revelation of the Quran was received in the Cave of Hira, near Makkah.</div>
+          </div>
+        </details>
+    </section>
+    
+
+  <section id="mocktests">
+    <h2 style="color:var(--navy);">Practice Test Papers (Full-Length Mock Papers)</h2>
+    <p>Use the MCQs above, organised by subject, as a bank you can turn into timed mock papers:
+    pick 50 questions across sections (roughly matching the real weightage: English, Physics,
+    Chemistry, Biology at ~25% each, plus Verbal/Non-Verbal and GK) and complete them in a strict
+    2-hour sitting with no notes, exactly like the real computer-based test. Repeat this 2–3 times
+    in your final week, reviewing every explanation for questions you get wrong.</p>
+  </section>
+
+  <section id="pastpapers-note">
+    <h2>A Note on "Past Papers"</h2>
+    <p>I want to be upfront about this rather than guess: there is no official, publicly released
+    archive of genuine AFNS exam papers from the last 5 years. What circulates online under that
+    label is mostly <b>informally recalled questions</b> compiled by candidates and repackaged by
+    prep websites and paid guidebooks (e.g., the Dogar AFNS Guide) &mdash; these are someone else's
+    compiled work, and I can't verify their authenticity or reproduce them here.</p>
+    <p>Rather than invent papers and label them as "real past papers" &mdash; which could hand your
+    girlfriend inaccurate material for something this important &mdash; I've instead built the
+    practice MCQs above to closely mirror the actual recurring question styles and topics
+    reported across multiple independent AFNS prep sources, with full explanations so she
+    understands the reasoning, not just the answer. If you want, I can also point you to specific
+    free (non-paywalled) prep sites you can browse yourself for additional recalled questions.</p>
+  </section>
+</main>
+
+<footer>Original study guide compiled for AFNS entry test preparation. Always verify eligibility criteria, exact test pattern, and dates against the current official Pakistan Army recruitment advertisement.</footer>
+
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+<script>
+/* ---------- Falling petals ---------- */
+(function(){
+  const layer = document.getElementById('petalLayer');
+  const colors = ['#F7A8C4','#F2C1D6','#E85D8A','#F9D5E5'];
+  const petalSVG = (color) => `<svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 0C10 3 16 5 16 8C16 11 10 13 8 16C6 13 0 11 0 8C0 5 6 3 8 0Z" fill="${color}" opacity="0.8"/></svg>`;
+  const count = window.innerWidth < 640 ? 12 : 20;
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const size = 10 + Math.random()*10;
+    p.style.left = (Math.random()*100)+'%';
+    p.style.width = size+'px';
+    p.style.animationDuration = (10 + Math.random()*10)+'s';
+    p.style.animationDelay = (Math.random()*14)+'s';
+    p.innerHTML = petalSVG(colors[i % colors.length]);
+    layer.appendChild(p);
+  }
+})();
+
+/* ---------- Scroll progress + header shadow + back to top ---------- */
+(function(){
+  const bar = document.getElementById('scrollProgress');
+  const backBtn = document.getElementById('backToTop');
+  window.addEventListener('scroll', ()=>{
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+    if(h.scrollTop > 500){ backBtn.classList.add('show'); } else { backBtn.classList.remove('show'); }
+  }, {passive:true});
+  backBtn.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+})();
+
+/* ---------- Reveal on scroll ---------- */
+(function(){
+  const targets = document.querySelectorAll('section.subject, .ov-card, #mocktests, #pastpapers-note');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('reveal'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+  targets.forEach(t=>io.observe(t));
+})();
+
+/* ---------- Active chip highlighting ---------- */
+(function(){
+  const chips = document.querySelectorAll('#chipNav a');
+  const sections = Array.from(chips).map(c => document.getElementById(c.dataset.target)).filter(Boolean);
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        chips.forEach(c=>c.classList.toggle('active', c.dataset.target === e.target.id));
+      }
+    });
+  }, {threshold:0, rootMargin:'-120px 0px -70% 0px'});
+  sections.forEach(s=>io.observe(s));
+})();
+
+/* ================= QUIZ ENGINE + PROGRESS TRACKING ================= */
+const STORAGE_KEY = 'afns_progress_v1';
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {attempted:0, correct:0, subjects:{}}; }
+  catch(e){ return {attempted:0, correct:0, subjects:{}}; }
+}
+function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} }
+let PROGRESS = loadProgress();
+let streak = 0;
+
+function renderProgressCard(){
+  const acc = PROGRESS.attempted ? Math.round(PROGRESS.correct / PROGRESS.attempted * 100) : 0;
+  document.getElementById('statAttempted').textContent = PROGRESS.attempted;
+  document.getElementById('statCorrect').textContent = PROGRESS.correct;
+  document.getElementById('statAccuracy').textContent = acc + '%';
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+const MOTIVATION_CORRECT = ['🌸 Nice! Keep going.', '✿ Great job — that\'s correct.', '❀ You\'re getting sharper!', '🌸 Solid answer!'];
+const MOTIVATION_STREAK = { 5: '🔥 5 in a row! You\'re on a roll.', 10: '🌟 10-question streak — amazing focus!' };
+const MOTIVATION_WRONG = ['🌱 Not quite — read the explanation, you\'ve got this.', '🌸 Slip-ups are part of learning. Onward!'];
+
+function recordAnswer(subject, correct){
+  PROGRESS.attempted++;
+  if(!PROGRESS.subjects[subject]) PROGRESS.subjects[subject] = {attempted:0, correct:0};
+  PROGRESS.subjects[subject].attempted++;
+  if(correct){
+    PROGRESS.correct++;
+    PROGRESS.subjects[subject].correct++;
+    streak++;
+    if(MOTIVATION_STREAK[streak]) showToast(MOTIVATION_STREAK[streak]);
+    else showToast(MOTIVATION_CORRECT[Math.floor(Math.random()*MOTIVATION_CORRECT.length)]);
+  } else {
+    streak = 0;
+    showToast(MOTIVATION_WRONG[Math.floor(Math.random()*MOTIVATION_WRONG.length)]);
+  }
+  saveProgress(PROGRESS);
+  renderProgressCard();
+}
+
+function renderQuiz(panel, data, subjectId){
+  let idx = 0, selected = null, checked = false, correctCount = 0;
+
+  function renderQuestion(){
+    if(idx >= data.length){
+      panel.innerHTML = `<div class="quiz-summary">
+        <div class="score">${correctCount} / ${data.length}</div>
+        <p>${correctCount === data.length ? '🌸 Perfect score! You\'ve mastered this set.' : correctCount / data.length >= 0.7 ? '✿ Great work — review the ones you missed.' : '🌱 Keep practicing — try this set again.'}</p>
+        <button class="quiz-btn" id="quizRestart">Restart Quiz</button>
+      </div>`;
+      document.getElementById('quizRestart').addEventListener('click', ()=>{ idx=0; selected=null; checked=false; correctCount=0; renderQuestion(); });
+      return;
+    }
+    const q = data[idx];
+    selected = null; checked = false;
+    panel.innerHTML = `
+      <div class="quiz-progress">Question ${idx+1} of ${data.length}</div>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-options">
+        ${q.optTexts.map((t,i)=>`<button class="quiz-option" data-i="${i}">${t}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <div class="quiz-actions">
+        <button class="quiz-btn" id="checkBtn" disabled>Check Answer</button>
+        <button class="quiz-btn" id="nextBtn" style="display:none;">Next</button>
+      </div>`;
+    const optBtns = panel.querySelectorAll('.quiz-option');
+    const checkBtn = panel.querySelector('#checkBtn');
+    const nextBtn = panel.querySelector('#nextBtn');
+    optBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(checked) return;
+        optBtns.forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selected = parseInt(btn.dataset.i);
+        checkBtn.disabled = false;
+      });
+    });
+    checkBtn.addEventListener('click', ()=>{
+      if(selected===null || checked) return;
+      checked = true;
+      const isCorrect = selected === q.correctIdx;
+      if(isCorrect) correctCount++;
+      optBtns.forEach(b=>{
+        b.disabled = true;
+        const i = parseInt(b.dataset.i);
+        if(i === q.correctIdx) b.classList.add('reveal-correct');
+        else if(i === selected) b.classList.add('reveal-wrong');
+      });
+      const fb = panel.querySelector('#quizFeedback');
+      fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+      fb.innerHTML = (isCorrect ? '✅ Correct! ' : '❌ Not quite. ') + q.explain;
+      checkBtn.style.display='none';
+      nextBtn.style.display='inline-block';
+      recordAnswer(subjectId, isCorrect);
+    });
+    nextBtn.addEventListener('click', ()=>{ idx++; renderQuestion(); });
+  }
+  renderQuestion();
+}
+
+function buildQuizEngine(){
+  document.querySelectorAll('section.subject').forEach(section=>{
+    const detailsEls = Array.from(section.querySelectorAll('details.mcq'));
+    const hint = section.querySelector('.mcq-hint');
+    if(!detailsEls.length || !hint) return;
+
+    const data = detailsEls.map(d=>{
+      const q = d.querySelector('summary').textContent.trim();
+      const opts = Array.from(d.querySelectorAll('.opt'));
+      const correctIdx = opts.findIndex(o=>o.classList.contains('correct'));
+      const optTexts = opts.map(o=>o.textContent.replace('✓','').trim());
+      const explain = d.querySelector('.explain').innerHTML;
+      return {q, optTexts, correctIdx, explain};
+    });
+
+    const toggleWrap = document.createElement('div');
+    toggleWrap.className = 'mode-toggle';
+    toggleWrap.innerHTML = `<button class="mode-btn active" data-mode="learn">📖 Learn Mode</button><button class="mode-btn" data-mode="quiz">✏️ Quiz Mode</button>`;
+    hint.after(toggleWrap);
+
+    const learnPanel = document.createElement('div');
+    learnPanel.className = 'learn-panel';
+    detailsEls[0].before(learnPanel);
+    detailsEls.forEach(d=>learnPanel.appendChild(d));
+
+    const quizPanel = document.createElement('div');
+    quizPanel.className = 'quiz-panel';
+    quizPanel.style.display = 'none';
+    learnPanel.after(quizPanel);
+
+    let quizBuilt = false;
+    toggleWrap.querySelectorAll('.mode-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        toggleWrap.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        if(btn.dataset.mode === 'learn'){
+          learnPanel.style.display = 'block';
+          quizPanel.style.display = 'none';
+        } else {
+          learnPanel.style.display = 'none';
+          quizPanel.style.display = 'block';
+          if(!quizBuilt){ renderQuiz(quizPanel, data, section.id); quizBuilt = true; }
+        }
+      });
+    });
+  });
+}
+
+buildQuizEngine();
+renderProgressCard();
+</script>
+</body>
+</html>
